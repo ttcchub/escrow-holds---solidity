@@ -14,6 +14,7 @@ contract MultiSigWallet {
         address to;
         uint value;
         bytes data;
+        //since its executes we set it as a true
         bool executed;
     }
     
@@ -36,7 +37,7 @@ contract MultiSigWallet {
 modifier onlyOwner() {
     require(isOwner[msg.sender], "not owner");
     // if check is successful, 
-    // and allow execusion fo rest functions if one of wners
+    // and allow execusion fo rest functions if one of owners
     _; 
 }
 
@@ -52,7 +53,8 @@ modifier notApproved( uint _txId ) {
     _;
 }
 
-// 
+
+// if checkk passed it will execute rest of the code
 modifier notExecuted(uint _txId) {
     require (!transactions[_txId].executed, "tx already executed");
     _;
@@ -153,7 +155,8 @@ function approve(uint _txId)
     txExists(_txId)
     notExecuted(_txId)
     {
-
+         
+        // to revoke we need first apporval
         require(approved[_txId][msg.sender], "tx not approved");
         approved[_txId][msg.sender] = false;
         emit Revoke(msg.sender, _txId);
